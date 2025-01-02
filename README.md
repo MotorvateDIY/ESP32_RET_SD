@@ -1,8 +1,8 @@
 ESP32_RET_SD
 =======
-ESP32 Reverse Engineering Tool with SD CAN bus datalogger for SavvyCAN
+ESP32 Reverse Engineering Tool with stand alone SD CAN bus datalogger and wifi support for SavvyCAN.
 Based on Collin Kidder (https://github.com/collin80) fantastic A0RET (https://github.com/collin80/A0RET)
-SD logging added by frank @ motorvateDIY Jan 1/2024
+SD logging added by frank @ motorvateDIY Jan 1/2025
 
  Main Goal: Easy to use CAN bus datalogging
  If an SD card *IS* detected at boot up, all CAN bus data is recorded to the SD card, in SavvyCAN CSV format for offline processing
@@ -27,7 +27,6 @@ Instructions for use:
  set SSID and password on lines 54-55
 
 
-=======
 Previous A0RET Readme
 =======
 
