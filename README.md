@@ -35,4 +35,15 @@ Instructions for use:
  - CAN bus speed on lines 54 (default: 500,000 bits/second)
  - SSID and password on lines 54-55 (default ESP32_RET_SD and motorvate)
 
+DIY: CAN Data Logger for ESP32_RET_SD 
+=======
+You can easily build your own hardware for the ESP32_RET_SD
+### You will need:
+- 30 Pin ESP32 Dev Kit
+- 3.3v CAN Bus Tranceiver (SN65HVD230)
+- SD or micro SD module
+- OBD Connector (Male)
 
+![CAN_logger_wiring_2](https://github.com/user-attachments/assets/4d57f81c-e4bc-42eb-9a5c-c3b9351b880e)
+
+### Once Assembled, you can use the ESP Web Tools and program it directly from Google Chrome and Microsoft Edge 
