@@ -17,9 +17,14 @@ With a focus of ease of use the following changes have been made from [A0RET](ht
  
  Now compiles using default 1.2MB APP partition 
 
-#### Requirements:
-You will need the following to be able to compile the run this project:
+How to Program ESP32
+=======
 
+#### Web Flash Requirements:
+- Use Google Chrome or Microsoft Edge and click on [ESP32_RET_SD_webflash](https://motorvatediy.github.io/ESP32_RET_SD_WebFlash/flash.html)
+
+#### Compile/Flah Requirements:
+You will need the following to be able to compile the run this project:
 - [Arduino IDE](https://www.arduino.cc/en/software) Tested on IDE v2.3.4
 - [Arduino-ESP32 Support](https://docs.espressif.com/projects/arduino-esp32/en/latest/getting_started.html) - Allows for programming the ESP32 with the Arduino IDE (Tested on Arduino core 2.0.17 and 3.0.7)
 - [esp32_can](https://github.com/MotorvateDIY/esp32_can) - A unified CAN library that supports the built-in CAN, updated for accurate SD card CAN time stamps
@@ -49,7 +54,7 @@ You can easily build your own hardware for the ESP32_RET_SD
 
 ![CAN_logger_wiring_2](https://github.com/user-attachments/assets/4d57f81c-e4bc-42eb-9a5c-c3b9351b880e)
 
-### Once Assembled, you can use the ESP Web Flasher (aka ESP Web Tools) and program it directly from Google Chrome or Microsoft Edge `(link to be added soon)` 
+### Once Assembled, you can use the ESP Web Flasher with Google Chrome or Microsoft Edge by clicking this link [ESP32_RET_SD_webflash](https://motorvatediy.github.io/ESP32_RET_SD_WebFlash/flash.html)
 
 
 MotorvateDIY CAN LOGGER Story
