@@ -49,6 +49,7 @@ You can easily build your own hardware for the ESP32_RET_SD
 - 3.3v CAN Bus Tranceiver (SN65HVD230)
 - SD or micro SD module
 - OBD Connector (Male)
+- Micro USB cable and laptop or power bank for power
 
 ### Then, connect everything as shown below: 
 
@@ -61,7 +62,7 @@ MotorvateDIY CAN LOGGER Story
 =======
 
 ### First Version
-Four years ago, this was my solution for low cost CAN bus data logging with SavvyCAN, using [A0RET](https://github.com/collin80/A0RET). That used a 30 pin, ESP32 dev kit and a 3.3v CAN bus transceiver (SN65HVD230) module and OBD pin 6 is connected to CAN HI, and pin 14 is CAN LO. 
+Four years ago, this was my solution for low cost CAN bus data logging with SavvyCAN, using [A0RET](https://github.com/collin80/A0RET). That used a 30 pin, ESP32 dev kit and a 3.3v CAN bus transceiver (SN65HVD230) module and OBD pin 6 is connected to CAN HI, pin 14 is connected to CAN LO and pin 5 is connected to thee ESP32 ground.
 
 Just plug it into the OBD diagnostic port (pre ~2016, no CAN gayeway!) connect it to a USB power bank and use a laptop running SavvyCAN to record the CAN bus over wifi. It was a low cost and reliable solution.
 ![orig_A0RET](https://github.com/user-attachments/assets/4bcdec63-5843-4e18-8ced-a2629d984728)
