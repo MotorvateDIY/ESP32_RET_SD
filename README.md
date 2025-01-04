@@ -9,8 +9,10 @@ Based on [Collin Kidder](https://github.com/collin80) fantastic [A0RET](https://
 
 
  ### Main Goal: Easy to use CAN Bus Recording to SD Card or with [SavvyCAN](https://github.com/collin80/SavvyCAN)
- - If an SD card  *IS*  detected at power up, all CAN bus data is recorded to the SD card, in SavvyCAN, CSV/GVRET format 
+ - If an SD card  *IS*  detected at power up, all CAN bus data is saved to the SD card, in SavvyCAN, CSV/GVRET format 
  - If an SD card  *IS NOT*  detected, a WIFI access point is created for a SavvyCAN connection to receive and/or send CAN frames
+ - When saving to the SD card and SavvyCAN connects, the SD stops recording and swithes to SavvyCAN mode.
+ - When in SavvyCAN mode and the ESP32 wifi connection is disconnected, it restarts and will either save CAN data to the SD card (if SD card present), or be in wifi mode.
 
 With a focus of ease of use the following changes have been made from [A0RET](https://github.com/collin80/A0RET)
  - Removed: ELM327 compatability
@@ -73,7 +75,7 @@ MotorvateDIY CAN LOGGER Story
 =======
 
 ### First Version
-Four years ago, this what I used for a low cost (<$15!) CAN bus data logging tool: SavvyCAN, with [A0RET](https://github.com/collin80/A0RET). I used a 30 pin, ESP32 dev kit, a 3.3v CAN bus transceiver (SN65HVD230) module and a male OBD connector. 
+Four years ago, this what I used for a low cost (<$15!) CAN bus data logging tool: SavvyCAN, with [A0RET](https://github.com/collin80/A0RET). I used a 30 pin ESP32 dev kit, a 3.3v CAN bus transceiver (SN65HVD230) module and a male OBD connector. 
 
 Plugging it into the OBD diagnostic port (pre ~2016, no CAN gayeway!), connect it to a USB power bank and use a laptop running SavvyCAN to record the CAN bus over wifi. It was a low cost and reliable solution.
 
