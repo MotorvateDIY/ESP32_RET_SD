@@ -65,8 +65,10 @@ You can easily build your own hardware for the ESP32_RET_SD
 ### Then, connect everything as shown below: (click to enlarge)
 
 <p align="center">
-<img width="640" alt="Fusion_CAN_logger" src="https://github.com/user-attachments/assets/27d40722-bca6-4b3d-b4b4-5f0b15f8acf2" />
+<img width="640" alt="Fusion_CAN_logger" src="https://github.com/user-attachments/assets/b3f7ae7b-d5ba-4573-8a0b-91fa7296a562" />
 </p>
+
+
 
 **Once Assembled, you can use the ESP Web Flasher with Google Chrome or Microsoft Edge: [ESP32_RET_SD_webflash](https://motorvatediy.github.io/ESP32_RET_SD_WebFlash/flash.html)**
 
