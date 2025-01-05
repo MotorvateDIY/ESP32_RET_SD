@@ -1,4 +1,4 @@
-ESP32 Based CAN Bus Reverse Engineering Tool with SD Logging
+ESP32 Based CAN Bus Reverse Engineering Tool with SD Card CAN Logging
 =======
 ESP32 Reverse Engineering Tool with stand alone SD CAN bus logging and wifi support for SavvyCAN.  
 Based on [Collin Kidder](https://github.com/collin80) fantastic [A0RET](https://github.com/collin80/A0RET).
