@@ -79,7 +79,7 @@ MotorvateDIY CAN LOGGER Story
 ### First Version
 Four years ago, this what I used for a low cost (<$15!) CAN bus data logging tool: SavvyCAN, with [A0RET](https://github.com/collin80/A0RET). I used a 30 pin ESP32 dev kit, a 3.3v CAN bus transceiver (SN65HVD230) module and a male OBD connector. 
 
-Plugging it into the OBD diagnostic port (pre ~2016, no CAN gayeway!), connect it to a USB power bank and use a laptop running SavvyCAN to record the CAN bus over wifi. It was a low cost and reliable solution.
+Plugging it into the OBD diagnostic port (pre ~2018, no CAN gateway!), connect it to a USB power bank and use a laptop running SavvyCAN to record the CAN bus over wifi. It was a low cost and reliable solution.
 
 <p align="center">
 <img width="480" alt="Fusion_CAN_logger_v1" src="https://github.com/user-attachments/assets/4bcdec63-5843-4e18-8ced-a2629d984728" />
