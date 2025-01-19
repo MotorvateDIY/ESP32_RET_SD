@@ -4,8 +4,9 @@ ESP32 Reverse Engineering Tool with stand alone SD CAN bus logging and wifi supp
 Based on [Collin Kidder](https://github.com/collin80) fantastic [A0RET](https://github.com/collin80/A0RET).
 
 <p align="center">
-<img width="640" alt="Fusion_CAN_logger" src="https://github.com/user-attachments/assets/6ae93f4f-55e7-445d-bb20-4bd320bd05ea" />
+<img width="640" alt="Fusion_CAN_logger" src="https://github.com/user-attachments/assets/10b025e7-0b5e-4ccc-b989-f0ef8a4e0be3" />
 </p>
+
 
 
  ### Main Goal: Easy to use CAN Bus Recording to SD Card or with [SavvyCAN](https://github.com/collin80/SavvyCAN)
