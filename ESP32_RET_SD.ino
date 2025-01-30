@@ -1,13 +1,15 @@
-// ESP32_RET_SD
+// ESP32_RET_SD (internally known as ESP32_RET_SD_v1)
 // ESP32 Reverse Engineering Tool with SD CAN bus datalogger for SavvyCAN
 // Based on Collin Kidder (https://github.com/collin80) fantastic A0RET (https://github.com/collin80/A0RET)
-// Updated by frank @ motorvate Jan 1/2024 to add standalone recording of all CAN data to the SD card in SavvyCAN format
+// Updated by frank @ motorvate Feb 1/2025
+
+// MotorvateDIY CAN LOGGER v1.0 PCB average current draw: Wifi: ~80mA @ 12v or 1W, with SD card: ~90ma @ 12v, or 1.1W
 
 // Main Goal: Easy to use, Plug and Play CAN bus datalogging
 // If an SD card *IS* detected at boot up, all CAN bus data is recorded to the SD card, in SavvyCAN CSV format for offline processing
-// If an SD card *IS NOT* detected, a WIFI access point is created for SavvyCAN to connect to and receive or send CAN frames
+// If an SD card *IS NOT* detected at boot up, a WIFI access point is created for SavvyCAN to connect to and receive or send CAN frames
 
-// compatable with Arduino core 2.0.x and 3.0.x
+// compatable with Arduino core 2.0.x and 3.1.x
 // Now compiles using default 1.2MB APP partition
 
 // With a focus on "easy of use", an offline mode (CAN to SD) has been added to the SavvyCAN mode (CAN to Wifi)
@@ -17,18 +19,17 @@
 // Removed: Bluetooth
 // Removed: Digital and Analog I/O
 
-// Added: saves all CAN data to SD card in SavvyCAN CSV format just by plugging into the OBD port for offline processing/reverse engineering
+// Added: Saving all CAN data to SD card in SavvyCAN CSV format just by plugging into the OBD port for offline processing/reverse engineering
 // Added: when saving to SD card, the ESP32 builtin LED is toggled every 250 (CAN_RX_LED_TOGGLE) CAN frames (set in config.h)
 // Added: getting timestamp as soon as possible, see gvret_comm.cpp line 558 and esp32_can_builtin.cpp line 398
 
 // Instructions for use:
 // in config.h:
-// set SD card pins on lines 43-46. Uses VSPI default pins of: SCK 18, MISO 19, MOSI 23, CS 5
-// set CAN Tx/Rx pins on lines 50-51. Defaults to CAN_TX 17, CAN_RX 16
-// set CAN0 speed on line 54. Default speed is 500,000 bits/sec
-// set SSID and password on lines 57-58. Default SSID: ESP32_RET_SD, password motorvate
+// set SD card pins on lines 43-46
+// set CAN Tx/Rx pins on lines 50-51
+// set SSID and password on lines 54-55
 // Compile and upload to ESP32!
-// full video instructions at youtube.com/motorvateDIY
+// full video instructions at YouTube.com/motorvateDIY
 
 /*
  A0RET.ino
@@ -100,9 +101,9 @@ Preferences nvPrefs;
 
 WiFiManager wifiManager;
 
-GVRET_Comm_Handler serialGVRET;  // gvret protocol over the serial to USB connection
-GVRET_Comm_Handler wifiGVRET;    // GVRET over the wifi telnet port
-CANManager canManager;           // keeps track of bus load and abstracts away some details of how things are done
+GVRET_Comm_Handler serialGVRET; // gvret protocol over the serial to USB connection
+GVRET_Comm_Handler wifiGVRET;   // GVRET over the wifi telnet port
+CANManager canManager;          // keeps track of bus load and abstracts away some details of how things are done
 
 SerialConsole console;
 
@@ -115,14 +116,15 @@ QueueHandle_t SD_Queue;
 // initializes all the system EEPROM values. Chances are this should be broken out a bit but
 // there is only one checksum check for all of them so it's simple to do it all here.
 // NOTE: IF PREFS ERROR, USE ? AND SET ONE ITEM. This writes the SSID< WPA2KEY and ELM327-BT to flash
-void loadSettings() {
-  settings.CAN0Speed = CAN_SPEED_500K;
+void loadSettings()
+{
+  settings.CAN0Speed = 500000;
   settings.CAN0_Enabled = true;
   settings.CAN0ListenOnly = false;
   settings.useBinarySerialComm = false;
-  settings.logLevel = 1;    // info
-  settings.wifiMode = 2;    // Wifi defaults to creating an AP
-  settings.systemType = 0;  // ESP32 with single CAN bus
+  settings.logLevel = 1;   // info
+  settings.wifiMode = 2;   // Wifi defaults to creating an AP
+  settings.systemType = 0; // ESP32 with single CAN bus
   settings.CAN1Speed = 500000;
   // below needs strcpy to copy the short string into the larger string 32/64
   strcpy(settings.SSID, SSID_NAME);
@@ -139,21 +141,23 @@ void loadSettings() {
   SysSettings.sdToggle = false;
   SysSettings.txToggle = false;
   SysSettings.rxToggle = true;
-  SysSettings.numBuses = 1;  // Currently we support CAN0
+  SysSettings.numBuses = 1; // Currently we support CAN0
   SysSettings.isWifiActive = false;
   SysSettings.isWifiConnected = false;
 }
 
 uint32_t chipId = 0;
 
-String getDefaultMacAddress() {
+String getDefaultMacAddress()
+{
 
   String mac = "";
 
-  unsigned char mac_base[6] = { 0 };
+  unsigned char mac_base[6] = {0};
 
-  if (esp_efuse_mac_get_default(mac_base) == ESP_OK) {
-    char buffer[18];  // 6*2 characters for hex + 5 characters for colons + 1 character for null terminator
+  if (esp_efuse_mac_get_default(mac_base) == ESP_OK)
+  {
+    char buffer[18]; // 6*2 characters for hex + 5 characters for colons + 1 character for null terminator
     sprintf(buffer, "%02X:%02X:%02X:%02X:%02X:%02X", mac_base[0], mac_base[1], mac_base[2], mac_base[3], mac_base[4], mac_base[5]);
     mac = buffer;
   }
@@ -161,14 +165,16 @@ String getDefaultMacAddress() {
   return mac;
 }
 
-String getInterfaceMacAddress(esp_mac_type_t interface) {
+String getInterfaceMacAddress(esp_mac_type_t interface)
+{
 
   String mac = "";
 
-  unsigned char mac_base[6] = { 0 };
+  unsigned char mac_base[6] = {0};
 
-  if (esp_read_mac(mac_base, interface) == ESP_OK) {
-    char buffer[18];  // 6*2 characters for hex + 5 characters for colons + 1 character for null terminator
+  if (esp_read_mac(mac_base, interface) == ESP_OK)
+  {
+    char buffer[18]; // 6*2 characters for hex + 5 characters for colons + 1 character for null terminator
     sprintf(buffer, "%02X:%02X:%02X:%02X:%02X:%02X", mac_base[0], mac_base[1], mac_base[2], mac_base[3], mac_base[4], mac_base[5]);
     mac = buffer;
   }
@@ -176,12 +182,19 @@ String getInterfaceMacAddress(esp_mac_type_t interface) {
   return mac;
 }
 
-void setup() {
+void setup()
+{
+  // allow supply voltage to stabalize
+  // delay(250);
 
   Serial.begin(115200);
 
+  // allow serial to setup and to prevent SD card header being sent to SD card on noisey power up
+  // delay(250);
+
   // display ESP32 details
-  for (int i = 0; i < 17; i = i + 8) {
+  for (int i = 0; i < 17; i = i + 8)
+  {
     chipId |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
   }
 
@@ -209,43 +222,55 @@ void setup() {
   spi.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
 
   // set SPI clock speed to 30 MHz
-  if (!SD.begin(SD_CS, spi, 30000000)) {
+  if (!SD.begin(SD_CS, spi, 30000000))
+  {
     Serial.print("\nSD card mount failed, ");
   }
 
   uint8_t cardType = SD.cardType();
 
-  if (cardType == CARD_NONE) {
+  if (cardType == CARD_NONE)
+  {
     Serial.println("no SD card found");
     SD_card_present = false;
-  } else {
+  }
+  else
+  {
     SD_card_present = true;
 
     // SD card Queue creation only if SD card detected
     SD_Queue = xQueueCreate(20, sizeof(SD_buffer));
-    if (SD_Queue == NULL) {
+    if (SD_Queue == NULL)
+    {
       Serial.println("Error Creating the SD Queue");
     }
 
     // create task to read xQueue and write to SD card
     xTaskCreatePinnedToCore(
-      TaskSDWrite,  // task function to call
-      "SD Write",   // name of task for optional eports
-      2048,         // Stack depth/size in bytes
-      NULL,         // pvParameters
-      2,            // Priority 1, same as setup() and loop(), now priority of 2
-      &xSDWrite,    // task handle
-      // NULL,     // no task handle
-      1);  // core to use for this task
+        TaskSDWrite, // task function to call
+        "SD Write",  // name of task for optional eports
+        2048,        // Stack depth/size in bytes
+        NULL,        // pvParameters
+        2,           // Priority 1, same as setup() and loop(), now priority of 2
+        &xSDWrite,   // task handle
+        // NULL,     // no task handle
+        1); // core to use for this task
 
     Serial.print("SD card type: ");
-    if (cardType == CARD_MMC) {
+    if (cardType == CARD_MMC)
+    {
       Serial.println("MMC");
-    } else if (cardType == CARD_SD) {
+    }
+    else if (cardType == CARD_SD)
+    {
       Serial.println("SDSC");
-    } else if (cardType == CARD_SDHC) {
+    }
+    else if (cardType == CARD_SDHC)
+    {
       Serial.println("SDHC");
-    } else {
+    }
+    else
+    {
       Serial.println("UNKNOWN");
     }
 
@@ -254,9 +279,10 @@ void setup() {
     Serial.printf("SD Card Size: %llu MB\n", SD.cardSize() / (1024 * 1024));
     Serial.printf("Available space: %llu MB\n", (SD.totalBytes() - SD.usedBytes()) / (1024 * 1024));
 
-    // create a unique LogFile filename
-    int fn = 0;
-    do {
+    // create a unique LogFile filename, start at 1
+    int fn = 1;
+    do
+    {
       sprintf(LogFileName, "/CAN_LOG_%d.csv", fn++);
     } while (SD.exists(LogFileName));
     LogFile = SD.open(LogFileName, FILE_APPEND);
@@ -267,7 +293,7 @@ void setup() {
 
     Serial.printf("CAN log filename: %s\n", LogFileName);
 
-  }  // end SD_card_present
+  } // end SD_card_present
 
   // sets CAN speed, LED pins, WIFI, SSID, etc
   loadSettings();
@@ -275,20 +301,15 @@ void setup() {
   // starts CAN
   canManager.setup();
 
-
-  if (SD_card_present) {
-    Serial.println("*** Recording CAN bus to SD card ***");
-  } else {
-    Serial.println("*** Ready for SavvyCAN Network (GVRET) connection ***");
-  }
-
+  // setup wifi
   SysSettings.isWifiConnected = false;
 
-  // allow CAN bus to start up before starting wifi
-  delay(250);
-
-  // setup wifi
-  wifiManager.setup();
+  if (!SD_card_present)
+  {
+    // allow CAN bus to start up before starting wifi
+    delay(250);
+    wifiManager.setup();
+  }
 }
 
 /*
@@ -296,7 +317,8 @@ Send a fake frame out USB and maybe to file to show where the mark was triggered
 set which can never happen in reality since frames are either 11 or 29 bit IDs. So, this is a sign that it is a mark frame
 and not a real frame. The bottom three bits specify which mark triggered.
 */
-void sendMarkTriggered(int which) {
+void sendMarkTriggered(int which)
+{
   CAN_FRAME frame;
   frame.id = 0xFFFFFFF8ull + which;
   frame.extended = true;
@@ -317,7 +339,8 @@ Any bytes between checksum and 0xF1 are thrown away
 Yes, this should probably have been done more neatly but this way is likely to be the
 fastest and safest with limited function calls
 */
-void loop() {
+void loop()
+{
   // uint32_t temp32;
   bool isConnected = false;
   int serialCnt;
@@ -326,7 +349,12 @@ void loop() {
   /*if (Serial)*/ isConnected = true;
 
   canManager.loop();
-  wifiManager.loop();
+
+// only start softAP is SD card is not present
+  if (!SD_card_present)
+  {
+    wifiManager.loop();
+  }
 
   size_t wifiLength = wifiGVRET.numAvailableBytes();
   size_t serialLength = serialGVRET.numAvailableBytes();
@@ -334,9 +362,11 @@ void loop() {
   size_t maxLength = (wifiLength > serialLength) ? wifiLength : serialLength;
 
   // If the max time has passed or the buffer is almost filled then send buffered data out
-  if ((micros() - lastFlushMicros > SER_BUFF_FLUSH_INTERVAL) || (maxLength > (WIFI_BUFF_SIZE - 40))) {
+  if ((micros() - lastFlushMicros > SER_BUFF_FLUSH_INTERVAL) || (maxLength > (WIFI_BUFF_SIZE - 40)))
+  {
     lastFlushMicros = micros();
-    if (serialLength > 0) {
+    if (serialLength > 0)
+    {
 
       if (SD_card_present)
       // saves CAN frames to uSD card in SavvyCAN CSV format
@@ -346,32 +376,30 @@ void loop() {
         // copy serialGVRET.getBufferedBytes() > transmitBuffer to SD_buffer
         memcpy(&SD_buffer, serialGVRET.getBufferedBytes(), serialLength);
 
-        if (xQueueSend(SD_Queue, (void *)&SD_buffer, 10 * portTICK_PERIOD_MS) != pdPASS) {
+        if (xQueueSend(SD_Queue, (void *)&SD_buffer, 10 * portTICK_PERIOD_MS) != pdPASS)
+        {
           Serial.println("xQueueSend to SD_Queue 10ms timeout error");
         }
 
-        // flush SD card every 20ms
         LogFile.flush();
 
         serialGVRET.clearBufferedBytes();
-        // only toggle Rx LED when writing to SD card, regardless of CAN activity
-
-        // toggles every 20ms x 100 = 2 seconds
-        // toggleRXLED();
-        // below works, but blinks too fast
-        // toggleSD_LED();
-      } else {
+      }
+      else
+      {
         serialGVRET.clearBufferedBytes();
       }
     }
 
-    if (wifiLength > 0) {
+    if (wifiLength > 0)
+    {
       wifiManager.sendBufferedData();
     }
   }
 
   serialCnt = 0;
-  while ((Serial.available() > 0) && serialCnt < 128) {
+  while ((Serial.available() > 0) && serialCnt < 128)
+  {
     serialCnt++;
     in_byte = Serial.read();
     serialGVRET.processIncomingByte(in_byte);
@@ -379,12 +407,17 @@ void loop() {
 }
 
 // write data to SD card
-void TaskSDWrite(void *pvParameters) {
-  for (;;) {
+void TaskSDWrite(void *pvParameters)
+{
+  for (;;)
+  {
     // blocks/waits 1000 ms to receive data from SD_Queue
-    if (xQueueReceive(SD_Queue, &SD_buffer, 1000 * portTICK_PERIOD_MS) != pdPASS) {
+    if (xQueueReceive(SD_Queue, &SD_buffer, 1000 * portTICK_PERIOD_MS) != pdPASS)
+    {
       Serial.println("SD queue receive error: 1000ms second timeout.");
-    } else {
+    }
+    else
+    {
       LogFile.print(SD_buffer);
     }
   }
