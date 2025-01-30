@@ -77,10 +77,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //This keeps the latency more consistent. Otherwise the buffer could partially fill and never send.
 #define SER_BUFF_FLUSH_INTERVAL 20000
 
-#define CFG_BUILD_NUM   408
+#define CFG_BUILD_NUM   410
 
 // #define CFG_VERSION "A0RET_v3 Alpha Dec 6, 2024 - Arduino 3.0.7"
-#define CFG_VERSION "ESP32_RET_SD v1.0 (Jan 1, 2025)"
+#define CFG_VERSION "ESP32_RET_SD v1.1 (Feb 1, 2025)"
 #define PREF_NAME   "ESP32_RET_SD"
 
 #define NUM_BUSES   2   //max # of buses supported by any of the supported boards
