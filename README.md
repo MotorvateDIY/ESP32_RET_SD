@@ -10,12 +10,10 @@ Based on [Collin Kidder](https://github.com/collin80) fantastic [A0RET](https://
 
 
  ### Main Goal: Easy to use CAN Bus Recording to SD Card or with [SavvyCAN](https://github.com/collin80/SavvyCAN)
- - If an SD card  *IS*  detected at power up, all CAN bus data is saved to the SD card, in SavvyCAN, CSV/GVRET format 
- - If an SD card  *IS NOT*  detected, a WIFI access point is created for a SavvyCAN connection to receive and/or send CAN frames
- - When saving to the SD card and SavvyCAN connects, the SD stops recording and swithes to SavvyCAN mode.
- - When in SavvyCAN mode and the ESP32 wifi connection is disconnected, it restarts and will either save CAN data to the SD card (if SD card present), or be in wifi mode.
+ - If a FAT32 formatted SD card  *IS*  detected at power up, all CAN bus data is saved to the SD card, in SavvyCAN, CSV/GVRET format 
+ - If a FAT32 formatted SD card  *IS NOT*  detected, a WIFI access point is created for a SavvyCAN connection to receive and/or send CAN frames
 
-With a focus of ease of use the following changes have been made from [A0RET](https://github.com/collin80/A0RET)
+With a focus on ease of use, the following changes have been made from [A0RET](https://github.com/collin80/A0RET)
  - Removed: ELM327 compatability
  - Removed: LAWICEL
  - Removed: Bluetooth
@@ -46,7 +44,7 @@ How to Program/Flash the ESP32
 #### Compile/Programming Requirements:
 You will need the following to be able to compile the run this project:
 - [Arduino IDE](https://www.arduino.cc/en/software) Tested on IDE v2.3.4
-- [Arduino-ESP32 Support](https://docs.espressif.com/projects/arduino-esp32/en/latest/getting_started.html) - Allows for programming the ESP32 with the Arduino IDE (Tested on Arduino core 2.0.17 and 3.0.7)
+- [Arduino-ESP32 Support](https://docs.espressif.com/projects/arduino-esp32/en/latest/getting_started.html) - Allows for programming the ESP32 with the Arduino IDE (Tested on Arduino core 2.0.17 and 3.1.1)
 - [esp32_can](https://github.com/MotorvateDIY/esp32_can) - A unified ESP32 CAN library. (Must use this version if you want SD CAN log timestamps)
 - [can_common](https://github.com/collin80/can_common) - Used by esp32_can
 - To record to a SD card, it must be 32GB or less and formatted in FAT32
